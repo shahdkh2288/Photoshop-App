@@ -16,30 +16,31 @@
 
 using namespace std;
 unsigned char image[SIZE][SIZE];
-
+unsigned char image2[SIZE][SIZE];
 void ReadImage();
-void saveImage();
 void BlackAndWhite();
 void Flip();
 void HorizontalFlip();
 void VerticalFlip();
+void DetectEdges();
 void again();
 
 int main() {
     cout << "Ahlan ya user ya habibi :)" << endl;
     ReadImage();
     int num;   //to make user choose any filter as he likes
-    cout<<"1.Black and White" << endl <<"2.Flip" << endl << "0.Exit" << endl;
+    cout<<"1.Black and White" << endl <<"2.Flip" << endl <<"3.Detect Edges" << endl << "0.Exit" << endl;
     cin >> num;
     if(num == 1){
         BlackAndWhite();
     } else if(num == 2){
         Flip();
+    }else if(num == 3){
+        DetectEdges();
     }
     if(num == 0){
         return 0;
     }
-    saveImage();
     again();
 
 }
@@ -58,13 +59,7 @@ void ReadImage() {
     strcat (imageFileName, ".bmp");      // Add to it .bmp extension and load image
     readGSBMP(imageFileName,image);
 }
-void saveImage(){
-    char imageFileName[100];
-    cout<<"enter the target file name";     // Get gray scale image target file name
-    cin>> imageFileName;
-    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
-    writeGSBMP(imageFileName,image);
-}
+
 void BlackAndWhite(){
     for(int i=0;i<SIZE;i++){
         for(int j=0;j<SIZE;j++){
@@ -75,6 +70,11 @@ void BlackAndWhite(){
 
         }
     }
+    char imageFileName[100];
+    cout<<"enter the target file name: ";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
 }
 
 void Flip(){
@@ -95,6 +95,11 @@ void HorizontalFlip(){
             swap(image[i][j],image[i][SIZE-j-1]);
         }
     }
+    char imageFileName[100];
+    cout<<"enter the target file name: ";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
 }
 void VerticalFlip(){
     for(int i=0;i<SIZE/2;i++){
@@ -102,4 +107,45 @@ void VerticalFlip(){
             swap(image[i][j],image[SIZE-i-1][j]);
         }
     }
+    char imageFileName[100];
+    cout<<"enter the target file name: ";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
+}
+
+void DetectEdges(){
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE;j++){
+            if(image[i][j]>127){
+                image[i][j]=255;
+            }else{
+                image[i][j]=0;
+            }
+        }
+    }
+
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE;j++){
+            if(image[i][j]-image[i][j+1] !=0){
+                image2[i][j]=0;
+            }else if(image[i][j]-image[i-1][j] !=0){
+                image2[i][j]=0;
+            }else if(image[i][j]-image[i+1][j] !=0) {
+                image2[i][j] = 0;
+            }else{
+                image2[i][j]=255;
+
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeGSBMP(imageFileName, image2);
 }
