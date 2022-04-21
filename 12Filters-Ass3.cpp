@@ -17,26 +17,33 @@
 using namespace std;
 unsigned char image[SIZE][SIZE];
 unsigned char image2[SIZE][SIZE];
-void ReadImage();
+void LoadImage();
 void BlackAndWhite();
 void Flip();
 void HorizontalFlip();
 void VerticalFlip();
 void DetectEdges();
+void Mirror();
+void LeftMirror();
+void RightMirror();
+void UpperMirror();
+void DownMirror();
 void again();
 
 int main() {
     cout << "Ahlan ya user ya habibi :)" << endl;
-    ReadImage();
+    LoadImage();
     int num;   //to make user choose any filter as he likes
-    cout<<"1.Black and White" << endl <<"2.Flip" << endl <<"3.Detect Edges" << endl << "0.Exit" << endl;
+    cout<<"1- Black & White Filter" << endl <<"4- Flip Image" << endl <<"7- Detect Image Edges" << endl <<"a- Mirror 1/2 Image" << endl << "0.Exit" << endl;
     cin >> num;
     if(num == 1){
         BlackAndWhite();
-    } else if(num == 2){
+    } else if(num == 4){
         Flip();
-    }else if(num == 3){
+    }else if(num == 7){
         DetectEdges();
+    }else if(num == int('a')){    //user must inter 97 ('a' in ascii =97)
+        Mirror();
     }
     if(num == 0){
         return 0;
@@ -52,7 +59,7 @@ void again(){
         main();
     }
 }
-void ReadImage() {
+void LoadImage() {
     char imageFileName[100];
     cout << "enter the source image file name: ";    // Get gray scale image target file name
     cin >> imageFileName;
@@ -81,11 +88,20 @@ void Flip(){
     cout<<"1.Horizontal"<<endl<<"2.Vertical"<<endl;
     int num;  //choosing between Horizontal Flip or Vertical flip
     cin>>num;
-    if(num==1){
-        HorizontalFlip();
-    }
-    else if(num==2){
-        VerticalFlip();
+    for(int i=0;i<3;i++){
+        if(num==1){
+            HorizontalFlip();
+            break;
+        }
+        else if(num==2){
+            VerticalFlip();
+            break;
+        }
+        else{
+            cout<<"please try again and enter 1 for Horizontal Flip or 2 for Vertical Flip"<<endl;
+            main();
+            break;
+        }
     }
 
 }
@@ -148,4 +164,96 @@ void DetectEdges(){
     // Add to it .bmp extension and load image
     strcat (imageFileName, ".bmp");
     writeGSBMP(imageFileName, image2);
+}
+void Mirror(){
+    char letter;
+    cout<<"(l)eft" << endl << "(r)ight" << endl << "(u)pper" << endl << "(d)own side" <<endl;
+    cin>>letter;  //user must enter one of these letters "l">>leftmirror","r">>rightmirror","u">>uppermirror","d">>downmirror
+    for(int i=0;i<5;i++) {
+        if (letter == 'l') {
+            LeftMirror();
+            break;
+        } else if (letter == 'r') {
+            RightMirror();
+            break;
+        } else if (letter == 'u') {
+            UpperMirror();
+            break;
+        } else if (letter == 'd') {
+            DownMirror();
+            break;
+        } else {
+            cout << "please try again and enter one of this letters" << endl;
+            main();
+            break;
+        }
+    }
+
+}
+void LeftMirror(){
+    for(int i=0; i<SIZE; i++){
+        for(int j=SIZE/2; j<SIZE; j++){
+            image[i][j]=image[i][SIZE-1-j];
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeGSBMP(imageFileName, image);
+}
+void RightMirror(){
+    for(int i=0; i<SIZE; i++ ){
+        for(int j=0; j<SIZE/2; j++){
+            image[i][j]=image[i][SIZE-j-1];
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeGSBMP(imageFileName, image);
+}
+void UpperMirror(){
+    for(int i=SIZE/2; i<SIZE; i++){
+        for(int j=0;j<SIZE;j++){
+            image[i][j]=image[SIZE-1-i][j];
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeGSBMP(imageFileName, image);
+}
+void DownMirror() {
+    for (int i = 0; i < SIZE/2; i++) {
+        for (int j =0; j < SIZE; j++) {
+            image[i][j]=image[SIZE-i-1][j];
+
+        }
+
+
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeGSBMP(imageFileName, image);
 }
