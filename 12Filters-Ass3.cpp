@@ -12,11 +12,14 @@
 #include <cstring>
 #include <cmath>
 #include "bmplib.h"
+#include "bmplib.cpp"
 
 
 using namespace std;
 unsigned char image[SIZE][SIZE];
 unsigned char image2[SIZE][SIZE];
+unsigned char newimage[SIZE][SIZE];
+unsigned char new_image[SIZE][SIZE];
 void LoadImage();
 void BlackAndWhite();
 void Flip();
@@ -36,31 +39,52 @@ void Merge_Images();
 void readnewimage();
 void shrink();
 void blur();
+void invert();
+void Rotate();
+void Rotate90();
+void Rotate180();
+void Rotate270();
+void enlarge();
+void shuffle();
+void saveImage();
 
 
 int main() {
     cout << "Ahlan ya user ya habibi :)" << endl;
     LoadImage();
     string f;   //to make user choose any filter as he likes
-    cout<<"1- Black & White Filter" << endl <<"3- Merge Filter"<< endl <<"4- Flip Image" << endl <<"5- Darken and Lighten Image"<< endl <<"7- Detect Image Edges" << endl <<"9- Shrink Image" << endl <<"a- Mirror 1/2 Image" << endl <<"c- Blur Image" << endl << "0.Exit" << endl;
+    cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl <<"2- Invert Filter"<< endl <<"3- Merge Filter"<< endl <<"4- Flip Image" << endl
+    <<"5- Darken and Lighten Image"<< endl <<"6- Rotate Image"<< endl <<"7- Detect Image Edges" << endl <<"8- Enlarge Image"<<
+    endl <<"9- Shrink Image" << endl <<"a- Mirror 1/2 Image" << endl <<"b- Shuffle Image"<< endl <<"c- Blur Image" << endl
+    <<"s- Save the image to a file"<< endl<< "0.Exit" << endl;
     cin >> f;
     if(f == "1"){
         BlackAndWhite();
+    }else if(f == "2"){
+        invert();
     }else if(f == "3"){
         Merge_Images();
     }else if(f == "4"){
         Flip();
     }else if(f == "5"){
         Darken_Lighten();
+    }else if(f == "6"){
+        Rotate();
     }else if(f == "7"){
         DetectEdges();
+    }else if(f == "8"){
+        enlarge();
     }else if(f == "9"){
         shrink();
     }else if(f == "a"){    
         Mirror();
+    }else if(f == "b"){    
+        shuffle();
     }else if(f == "c"){    
         blur();
-    }else if(num == "0"){
+    }else if(f == "s"){    
+        saveImage();
+    }else if(f == "0"){
         return 0;
     }
     again();
@@ -70,7 +94,7 @@ void again(){
     string again;  //to make user do more than one filter
     cout<<"you want another filter? "<<endl;
     cin>>again;
-    if (again == "yes") {
+    while(again == "yes"){
         main();
     }
 }
@@ -317,7 +341,7 @@ void Lighten(){
 
 void readnewimage(){
     char imageFileName[100];
-    cout << "Enter the other image file name: ";       // Get gray scale image file name
+    cout << "Please enter name of image file to merge with: ";       // Get gray scale image file name
     cin >> imageFileName;
     strcat (imageFileName, ".bmp");     // Add to it .bmp extension and load image
     readGSBMP(imageFileName, newimage);
@@ -396,4 +420,212 @@ void blur()
     cin>> imageFileName;
     strcat(imageFileName,".bmp");
     writeGSBMP(imageFileName,new_image);
+}
+
+void invert()
+{
+    for(int i = 0 ; i < SIZE ; i ++)
+    {
+        for(int j = 0;j<SIZE;j++)
+        {
+            image[i][j]=255-image[i][j];
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
+}
+
+
+void Rotate()
+{
+    int rotate;
+    cout<<"Rotate (90) or (180) or (270): ";
+    cin>>rotate;
+    if(rotate==90)
+    {
+        Rotate90();
+    }
+    else if(rotate==180)
+    {
+        Rotate180();
+    }
+    else if(rotate == 270)
+    {
+        Rotate270();
+    }
+}
+void Rotate90()
+{
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0, m = 256 - 1; j < m; j++, m--) {
+
+            swap(image[j][i], image[m][i]);
+        }
+    }
+    for (int i = 0; i < 256; i++) {
+        for (int j = i; j < 256; j++) {
+            swap(image[i][j], image[j][i]);
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
+}
+void Rotate180()
+{
+
+    for(int i=0;i<256;i++){
+        for(int j=i;j<256;j++){
+            swap(image[i][j],image[j][i]);
+        }
+    }
+    for(int i=0;i<256;i++){
+        for(int j=0;j<256-i;j++){
+            swap(image[i][j],image[256-1-j][256-1-i]);
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
+}
+void Rotate270() {
+    for (int i = 0; i < 256; i++) {
+        for (int j = i + 1; j < 256; j++) {
+            swap(image[i][j], image[j][i]);
+        }
+    }
+    {
+        for (int i = 0; i < 256; i++) {
+            for (int j = i + 1; j < 256; j++) {
+                swap(image[j][i], image[i][j]);
+            }
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
+}
+
+void enlarge(){
+    int q;
+    cout<<"Enter the quarter num: ";
+    cin>>q;
+    cout<<endl;
+    if(q==1) {
+        for (int i = 0, R = 0; i < 128; i++) {          //R is a counter for new_image rows
+            for (int j = 0, C = 0; j < 128; j++) {      //C is a counter for new_image columns
+                new_image[R][C] = image[i][j];
+                new_image[R + 1][C] = image[i][j];
+                new_image[R][C + 1] = image[i][j];
+                new_image[R + 1][C + 1] = image[i][j];
+                C += 2;
+            }
+            R += 2;
+        }
+    }
+    else if(q==2){
+        for (int i = 0, R = 0; i < 128; i++) {
+            for (int j = 128, C = 0; j < 256; j++) {
+                new_image[R][C] = image[i][j];
+                new_image[R + 1][C] = image[i][j];
+                new_image[R][C + 1] = image[i][j];
+                new_image[R + 1][C + 1] = image[i][j];
+                C += 2;
+            }
+            R += 2;
+        }
+    }
+    else if(q==3){
+        for (int i = 128, R = 0; i < 256; i++) {
+            for (int j = 0, C = 0; j < 128; j++) {
+                new_image[R][C] = image[i][j];
+                new_image[R + 1][C] = image[i][j];
+                new_image[R][C + 1] = image[i][j];
+                new_image[R + 1][C + 1] = image[i][j];
+                C += 2;
+            }
+            R += 2;
+        }
+    }
+    else if(q==4){
+        for (int i = 128, R = 0; i < 256; i++) {
+            for (int j = 128, C = 0; j < 256; j++) {
+                new_image[R][C] = image[i][j];
+                new_image[R + 1][C] = image[i][j];
+                new_image[R][C + 1] = image[i][j];
+                new_image[R + 1][C + 1] = image[i][j];
+                C += 2;
+            }
+            R += 2;
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name: ";
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");
+    writeGSBMP(imageFileName,new_image);
+}
+
+
+void MoveQ(int m, int i, int j ) {
+    int t = j;
+    if (m == 1) {
+        for (int x = 0; x < 128; i++, x++) {
+            j = t;
+            for (int z = 0; z < 128; j++, z++)
+                new_image[i][j] = image[x][z];
+        }
+    }
+    else if (m == 2){
+        for (int x = 0; x < 128; i++, x++) {
+            j = t;
+            for (int z = 128; z < 256; j++, z++)
+                new_image[i][j] = image[x][z];
+        }
+    }else if (m ==3) {
+        for (int x = 128; x < 256; i++, x++) {
+            j = t;
+            for (int z = 0; z < 128; j++, z++)
+                new_image[i][j] = image[x][z];
+        }
+    }else if (m ==4) {
+        for (int x = 128; x < 256; i++, x++) {
+            j = t;
+            for (int z = 128; z < 256; j++, z++)
+                new_image[i][j] = image[x][z];
+        }
+    }
+}
+void shuffle() {
+    int n;
+    cout << "Enter the order of quadrants: ";
+    for (int i = 0; i < 4; i++) {
+        cin >> n;
+        if (i == 0) MoveQ(n, 0, 0);
+        else if (i == 1) MoveQ(n, 0, 128);
+        else if (i == 2) MoveQ(n, 128, 0);
+        else if (i == 3) MoveQ(n, 128, 128);
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name";
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");
+    writeGSBMP(imageFileName,new_image);
+}
+
+void saveImage(){
+    char imageFileName[100];
+    cout<<"enter the target file name";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
 }
