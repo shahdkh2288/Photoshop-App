@@ -29,23 +29,38 @@ void RightMirror();
 void UpperMirror();
 void DownMirror();
 void again();
+void Darken_Lighten();
+void Darken();
+void Lighten();
+void Merge_Images();
+void readnewimage();
+void shrink();
+void blur();
+
 
 int main() {
     cout << "Ahlan ya user ya habibi :)" << endl;
     LoadImage();
-    int num;   //to make user choose any filter as he likes
-    cout<<"1- Black & White Filter" << endl <<"4- Flip Image" << endl <<"7- Detect Image Edges" << endl <<"a- Mirror 1/2 Image" << endl << "0.Exit" << endl;
-    cin >> num;
-    if(num == 1){
+    string f;   //to make user choose any filter as he likes
+    cout<<"1- Black & White Filter" << endl <<"3- Merge Filter"<< endl <<"4- Flip Image" << endl <<"5- Darken and Lighten Image"<< endl <<"7- Detect Image Edges" << endl <<"9- Shrink Image" << endl <<"a- Mirror 1/2 Image" << endl <<"c- Blur Image" << endl << "0.Exit" << endl;
+    cin >> f;
+    if(f == "1"){
         BlackAndWhite();
-    } else if(num == 4){
-        Flip();
-    }else if(num == 7){
-        DetectEdges();
-    }else if(num == int('a')){    //user must inter 97 ('a' in ascii =97)
-        Mirror();
     }
-    if(num == 0){
+    else if(f == "3"){
+        Merge_Images();
+    }else if(f == "4"){
+        Flip();
+    }else if(f == "5"){
+        Darken_Lighten();
+    }else if(f == "7"){
+        DetectEdges();
+    }else if(f == "a"){    
+        Mirror();
+    }else if(f == "c"){    
+        blur();
+    }
+    if(num == "0"){
         return 0;
     }
     again();
@@ -256,4 +271,129 @@ void DownMirror() {
     // Add to it .bmp extension and load image
     strcat (imageFileName, ".bmp");
     writeGSBMP(imageFileName, image);
+}
+
+
+void Darken_Lighten(){
+    string text;
+    cout<<"Darken or Lighten: ";
+    cin>>text;
+    if (text=="Darken") {
+        Darken();
+    }
+    else if(text=="Lighten") {
+        Lighten();
+    }
+}
+
+void Darken() {
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0; j < 256; j++) {
+            if (image[i][j] >= 127) {
+                image[i][j] -= 63;
+            }
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
+}
+void Lighten(){
+    for (int i = 0; i < 256; i ++) {
+        for (int j = 0; j < 256; j ++) {
+            if(image[i][j]<=127){
+                image[i][j]+=63;
+            }
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
+}
+
+void readnewimage(){
+    char imageFileName[100];
+    cout << "Enter the other image file name: ";       // Get gray scale image file name
+    cin >> imageFileName;
+    strcat (imageFileName, ".bmp");     // Add to it .bmp extension and load image
+    readGSBMP(imageFileName, newimage);
+}
+
+void Merge_Images(){
+    readnewimage();
+    for (int i = 0; i < 256; i ++) {
+        for (int j = 0;j < 256; j ++) {
+            image[i][j]=(image[i][j]+newimage[i][j])/2;
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name: ";     // Get gray scale image target file name
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");       // Add to it .bmp extension and load image
+    writeGSBMP(imageFileName,image);
+}
+
+void shrink()
+{
+    int shr;
+    cout<<"2.Shrink 1/2"<<endl<<
+          "3.Shrink 1/3"<<endl<<
+          "4.Shrink 1/4"<<endl<<"enter: ";
+    cin>>shr;
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0; j < 256; j++) {
+            if (i != 0) {
+                for (int z = i; z <= 256 - i; z++) {
+                    if (z == 256 - i) {
+                        image[z][j] = 255;
+                    }
+                    else {
+                        image[z][j] = image[z + shr][j];
+                    }
+                }
+            }
+
+        }
+    }
+    for (int i = 0; i < 256 / 2; i++) {
+        for (int j = 0; j < 256; j++) {
+            if (j != 0) {
+                for (int z = j; z <= 256 - j; z++) {
+                    if (z == 256 - j) {
+                        image[i][z] = 255;
+                    }
+                    else {
+                        image[i][z] = image[i][z + shr];
+                    }
+                }
+            }
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name: ";
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");
+    writeGSBMP(imageFileName,image);
+}
+
+void blur()
+{
+    int sum=0;
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0; j < 256; j++) {
+        if((i!=0||i!=255)&&(j!=0||j!=255)){
+            sum=(image[i][j]+image[i+1][j]+image[i-1][j]+image[i][j+1]+image[i][j-1]+image[i+1][j+1]+image[i-1][j-1]+image[i+1][j-1]+image[i-1][j+1])/9;
+            new_image[i][j]=sum;
+        }
+        }
+    }
+    char imageFileName[100];
+    cout<<"enter the target file name: ";
+    cin>> imageFileName;
+    strcat(imageFileName,".bmp");
+    writeGSBMP(imageFileName,new_image);
 }
