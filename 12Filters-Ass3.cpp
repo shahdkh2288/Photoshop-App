@@ -46,8 +46,7 @@ int main() {
     cin >> f;
     if(f == "1"){
         BlackAndWhite();
-    }
-    else if(f == "3"){
+    }else if(f == "3"){
         Merge_Images();
     }else if(f == "4"){
         Flip();
@@ -55,12 +54,13 @@ int main() {
         Darken_Lighten();
     }else if(f == "7"){
         DetectEdges();
+    }else if(f == "9"){
+        shrink();
     }else if(f == "a"){    
         Mirror();
     }else if(f == "c"){    
         blur();
-    }
-    if(num == "0"){
+    }else if(num == "0"){
         return 0;
     }
     again();
