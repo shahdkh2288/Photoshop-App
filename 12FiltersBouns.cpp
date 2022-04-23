@@ -7,6 +7,7 @@
 using namespace std;
 unsigned char colored_image[SIZE][SIZE][RGB];
 unsigned char image[SIZE][SIZE];
+unsigned char image3[SIZE][SIZE];
 unsigned char grey_image[SIZE][SIZE];
 unsigned char image2[SIZE][SIZE][RGB];
 void loadImage ();
@@ -16,12 +17,14 @@ void Merge_Images();
 void Flip();
 void HorizontalFlip();
 void VerticalFlip();
+void DetectEdges();
 void again();
 int main(){
     cout << "Ahlan ya user ya habibi :)" << endl;
     loadImage();
     string f;   //to make user choose any filter as he likes
-    cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl << "3- Merge Filter"<< endl <<"4- Flip Image" << endl;
+    cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl << "3- Merge Filter"<< endl <<"4- Flip Image" << endl
+            <<"7- Detect Image Edges" << endl << "0.Exit" << endl;
     cin>>f;
     if(f == "1"){
         BlackAndWhite();
@@ -29,6 +32,10 @@ int main(){
         Merge_Images();
     }else if(f == "4"){
         Flip();
+    }else if(f == "7"){
+        DetectEdges();
+    }else if(f == "0"){
+        return 0;
     }
     again();
     return 0;
@@ -168,4 +175,45 @@ void VerticalFlip(){
     // Add to it .bmp extension and load image
     strcat (imageFileName, ".bmp");
     writeRGBBMP(imageFileName, colored_image);
+}
+void DetectEdges(){
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE;j++){
+            grey_image[i][j]=(colored_image[i][j][0]* 0.299) + (colored_image[i][j][1]* 0.587) + (colored_image[i][j][2]*0.114);
+            image[i][j]+=grey_image[i][j];
+        }
+    }
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE;j++){
+            if(image[i][j]>127){
+                image[i][j]=255;
+            }else{
+                image[i][j]=0;
+            }
+        }
+    }
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE;j++){
+            if(image[i][j]-image[i][j+1] !=0){
+                image3[i][j]=0;
+            }else if(image[i][j]-image[i-1][j] !=0){
+                image3[i][j]=0;
+            }else if(image[i][j]-image[i+1][j] !=0) {
+                image3[i][j] = 0;
+            }else{
+                image3[i][j]=255;
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeGSBMP(imageFileName, image3);
+
+
 }
