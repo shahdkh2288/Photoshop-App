@@ -10,7 +10,11 @@ unsigned char image[SIZE][SIZE];
 unsigned char image3[SIZE][SIZE];
 unsigned char grey_image[SIZE][SIZE];
 unsigned char image2[SIZE][SIZE][RGB];
+unsigned char new_image[SIZE][SIZE][RGB];
+unsigned char newimage[SIZE][SIZE][RGB];
+
 void loadImage ();
+void saveImage();
 void BlackAndWhite ();
 void readnewimage();
 void Merge_Images();
@@ -32,11 +36,15 @@ void again();
 void enlarge();
 void shuffle();
 void MoveQ();
-
+void Darken_Lighten();
+void Darken();
+void Lighten();
+void shrink();
+void blur();
 
 int main(){
     cout << "Ahlan ya user ya habibi :)" << endl;
-    LoadImage();
+    loadImage();
     string f;   //to make user choose any filter as he likes
     cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl <<"2- Invert Filter"<< endl <<"3- Merge Filter"<< endl <<"4- Flip Image" << endl
     <<"5- Darken and Lighten Image"<< endl <<"6- Rotate Image"<< endl <<"7- Detect Image Edges" << endl <<"8- Enlarge Image"<<
@@ -96,6 +104,18 @@ void loadImage () {
     strcat (imageFileName, ".bmp");
     readRGBBMP(imageFileName, colored_image);
 }
+void saveImage () {
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
+}
+
 
 void BlackAndWhite(){
     for(int i=0;i<SIZE;i++){
@@ -661,4 +681,137 @@ void shuffle() {
         else if (i == 2) MoveQ(n, 128, 0);
         else if (i == 3) MoveQ(n, 128, 128);
     }
+}
+
+void Darken_Lighten(){
+    string text;
+    cout<<"Darken or Lighten: ";
+    cin>>text;
+    if (text=="Darken") {
+        Darken();
+    }
+    else if(text=="Lighten") {
+        Lighten();
+    }
+}
+
+void Darken() {
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0; j < 256; j++) {
+            for(int k=0 ;k<RGB;k++) {
+                if (colored_image[i][j][k] >= 127) {
+                    colored_image[i][j][k] -= 63;
+                }
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
+
+}
+void Lighten(){
+    for (int i = 0; i < 256; i ++) {
+        for (int j = 0; j < 256; j++) {
+            for(int k=0;k<RGB;k++) {
+                if (colored_image[i][j][k] <= 127) {
+                    colored_image[i][j][k] += 63;
+                }
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
+}
+
+
+void shrink() {
+    int shr;
+    cout << "2.Shrink 1/2" << endl <<
+         "3.Shrink 1/3" << endl <<
+         "4.Shrink 1/4" << endl << "enter: ";
+    cin >> shr;
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0; j < 256; j++) {
+            for(int k=0;k<RGB;k++) {
+                if (i != 0) {
+                    for (int z = i; z <= 256 - i; z++) {
+                        if (z == 256 - i) {
+                            colored_image[z][j][k] = 255;
+                        } else {
+                            colored_image[z][j][k] = colored_image[z + shr][j][k];
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+    for (int i = 0; i < 256 / 2; i++) {
+        for (int j = 0; j < 256; j++) {
+            for(int k=0;k<RGB;k++) {
+                if (j != 0) {
+                    for (int z = j; z <= 256 - j; z++) {
+                        if (z == 256 - j) {
+                            colored_image[i][z][k] = 255;
+                        } else {
+                            colored_image[i][z][k] = colored_image[i][z + shr][k];
+                        }
+                    }
+                }
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
+}
+
+
+void blur(){
+    int redsum=0,bluesum=0,greensum=0;
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0; j < 256; j++) {
+                if ((i != 0 || i != 255) && (j != 0 || j != 255)) {
+                    redsum = (colored_image[i][j][0] + colored_image[i + 1][j][0] + colored_image[i - 1][j][0] + colored_image[i][j + 1][0] + colored_image[i][j - 1][0] +
+                           colored_image[i + 1][j + 1][0] + colored_image[i - 1][j - 1][0] + colored_image[i + 1][j - 1][0] + colored_image[i - 1][j + 1][0]) / 9;
+                    newimage[i][j][0] = redsum;
+                    bluesum = (colored_image[i][j][1] + colored_image[i + 1][j][1] + colored_image[i - 1][j][1] + colored_image[i][j + 1][1] + colored_image[i][j - 1][1] +
+                              colored_image[i + 1][j + 1][1] + colored_image[i - 1][j - 1][1] + colored_image[i + 1][j - 1][1] + colored_image[i - 1][j + 1][1]) / 9;
+                    newimage[i][j][1] = bluesum;
+                    greensum = (colored_image[i][j][2] + colored_image[i + 1][j][2] + colored_image[i - 1][j][2] + colored_image[i][j + 1][2] + colored_image[i][j - 1][2] +
+                              colored_image[i + 1][j + 1][2] + colored_image[i - 1][j - 1][2] + colored_image[i + 1][j - 1][2] + colored_image[i - 1][j + 1][2]) / 9;
+                    newimage[i][j][2] = greensum;
+
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, new_image);
 }
