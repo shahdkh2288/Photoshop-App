@@ -29,13 +29,20 @@ void Rotate180();
 void Rotate270();
 void invert_Image();
 void again();
+void enlarge();
+void shuffle();
+void MoveQ();
+
+
 int main(){
     cout << "Ahlan ya user ya habibi :)" << endl;
-    loadImage();
+    LoadImage();
     string f;   //to make user choose any filter as he likes
-    cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl <<"2- Invert Filter"<< endl << "3- Merge Filter"<< endl <<"4- Flip Image" << endl
-            <<"6- Rotate Image"<< endl << "7- Detect Image Edges" << endl <<"a- Mirror 1/2 Image" << endl << "0.Exit" << endl;
-    cin>>f;
+    cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl <<"2- Invert Filter"<< endl <<"3- Merge Filter"<< endl <<"4- Flip Image" << endl
+    <<"5- Darken and Lighten Image"<< endl <<"6- Rotate Image"<< endl <<"7- Detect Image Edges" << endl <<"8- Enlarge Image"<<
+    endl <<"9- Shrink Image" << endl <<"a- Mirror 1/2 Image" << endl <<"b- Shuffle Image"<< endl <<"c- Blur Image" << endl
+    <<"s- Save the image to a file"<< endl<< "0.Exit" << endl;
+    cin >> f;
     if(f == "1"){
         BlackAndWhite();
     }else if(f == "2"){
@@ -44,17 +51,29 @@ int main(){
         Merge_Images();
     }else if(f == "4"){
         Flip();
-    }else if(f == "6") {
+    }else if(f == "5"){
+        Darken_Lighten();
+    }else if(f == "6"){
         Rotate();
     }else if(f == "7"){
         DetectEdges();
-    }else if(f == "a"){
+    }else if(f == "8"){
+        enlarge();
+    }else if(f == "9"){
+        shrink();
+    }else if(f == "a"){    
         Mirror();
+    }else if(f == "b"){    
+        shuffle();
+    }else if(f == "c"){    
+        blur();
+    }else if(f == "s"){    
+        saveImage();
     }else if(f == "0"){
         return 0;
     }
     again();
-    return 0;
+
 }
 void again() {
     string again;  //to make user do more than one filter
@@ -509,4 +528,137 @@ void invert_Image(){
     strcat (imageFileName, ".bmp");
     writeRGBBMP(imageFileName, colored_image);
 
+}
+
+
+void enlarge() {
+    int q;
+    cout << "Enter the quarter num: ";
+    cin >> q;
+    cout << endl;
+    if (q == 1) {
+        for (int i = 0, R = 0; i < 128; i++) {          //R is a counter for new_image rows
+            for (int j = 0, C = 0; j < 128; j++) {   //C is a counter for new_image columns
+                for (int k = 0; k < RGB; k++) {
+                    new_image[R][C][k] = colored_image[i][j][k];
+                    new_image[R + 1][C][k] = colored_image[i][j][k];
+                    new_image[R][C + 1][k] = colored_image[i][j][k];
+                    new_image[R + 1][C + 1][k] = colored_image[i][j][k];
+                }
+                C += 2;
+            }
+            R += 2;
+
+        }
+    } else if (q == 2) {
+        for (int i = 0, R = 0; i < 128; i++) {
+            for (int j = 128, C = 0; j < 256; j++) {
+                for (int k = 0; k < RGB; k++) {
+                    new_image[R][C][k] = colored_image[i][j][k];
+                    new_image[R + 1][C][k] = colored_image[i][j][k];
+                    new_image[R][C + 1][k] = colored_image[i][j][k];
+                    new_image[R + 1][C + 1][k] = colored_image[i][j][k];
+                }
+                C += 2;
+            }
+            R += 2;
+        }
+    } else if (q == 3) {
+        for (int i = 128, R = 0; i < 256; i++) {
+            for (int j = 0, C = 0; j < 128; j++) {
+                for (int k = 0; k < RGB; k++) {
+                    new_image[R][C][k] = colored_image[i][j][k];
+                    new_image[R + 1][C][k] = colored_image[i][j][k];
+                    new_image[R][C + 1][k] = colored_image[i][j][k];
+                    new_image[R + 1][C + 1][k] = colored_image[i][j][k];
+                }
+                C += 2;
+            }
+            R += 2;
+        }
+    } else if (q == 4) {
+        for (int i = 128, R = 0; i < 256; i++) {
+            for (int j = 128, C = 0; j < 256; j++) {
+                for (int k = 0; k < RGB; k++) {
+                    new_image[R][C][k] = colored_image[i][j][k];
+                    new_image[R + 1][C][k] = colored_image[i][j][k];
+                    new_image[R][C + 1][k] = colored_image[i][j][k];
+                    new_image[R + 1][C + 1][k] = colored_image[i][j][k];
+                }
+                C += 2;
+            }
+            R += 2;
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, new_image);
+}
+
+
+void MoveQ(int m, int i, int j ) {
+    int t = j;
+    if (m == 1) {
+        for (int x = 0; x < 128; i++, x++) {
+            j = t;
+            for (int z = 0; z < 128; j++, z++) {
+                for (int k = 0; k < RGB; k++) {
+                    new_image[i][j][k] = colored_image[x][z][k];
+                }
+            }
+        }
+    }else if (m == 2) {
+        for (int x = 0; x < 128; i++, x++) {
+            j = t;
+            for (int z = 128; z < 256; j++, z++) {
+                for (int k = 0; k < RGB; k++) {
+                    new_image[i][j][k] = colored_image[x][z][k];
+                }
+            }
+        }
+    }else if (m ==3) {
+        for (int x = 128; x < 256; i++, x++) {
+            j = t;
+            for (int z = 0; z < 128; j++, z++) {
+                for (int k = 0; k < RGB; k++) {
+                    new_image[i][j][k] = colored_image[x][z][k];
+                }
+            }
+        }
+    }else if (m ==4) {
+        for (int x = 128; x < 256; i++, x++) {
+            j = t;
+            for (int z = 128; z < 256; j++, z++) {
+                for (int k = 0; k < RGB; k++) {
+                    new_image[i][j][k] = colored_image[x][z][k];
+                }
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, new_image);
+}
+void shuffle() {
+    int n;
+    cout << "Enter the order of quadrants: ";
+    for (int i = 0; i < 4; i++) {
+        cin >> n;
+        if (i == 0) MoveQ(n, 0, 0);
+        else if (i == 1) MoveQ(n, 0, 128);
+        else if (i == 2) MoveQ(n, 128, 0);
+        else if (i == 3) MoveQ(n, 128, 128);
+    }
 }
