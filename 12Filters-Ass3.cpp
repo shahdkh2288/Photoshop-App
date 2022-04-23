@@ -1,6 +1,6 @@
 // FCI – Programming 1 – 2022 - Assignment 3
 // Program Name: 12Filters.cpp
-// Last Modification Date: 21/4/2022
+// Last Modification Date: 4/23/2022
 // Author1 and ID and Group: shahd khaled , ID:20210182 , Group A
 // Author2 and ID and Group: youssef alaa , ID:20210476 , Group:A
 // Author3 and ID and Group: Marya zoher , ID:20210785 , Group: A
@@ -8,10 +8,11 @@
 // Purpose:Task 2 assignment3
 #include <bits/stdc++.h>
 #include <iostream>
+#include <cmath>
 #include <fstream>
 #include <cstring>
 #include "bmplib.h"
-#include "bmplib.cpp"
+
 
 
 using namespace std;
@@ -95,6 +96,7 @@ void again(){
     cin>>again;
     while(again == "yes"){
         main();
+        break;
     }
 }
 void LoadImage() {
