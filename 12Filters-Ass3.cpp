@@ -10,7 +10,6 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
-#include <cmath>
 #include "bmplib.h"
 #include "bmplib.cpp"
 
