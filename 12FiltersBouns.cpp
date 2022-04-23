@@ -23,20 +23,29 @@ void LeftMirror();
 void RightMirror();
 void UpperMirror();
 void DownMirror();
+void Rotate();
+void Rotate90();
+void Rotate180();
+void Rotate270();
+void invert_Image();
 void again();
 int main(){
     cout << "Ahlan ya user ya habibi :)" << endl;
     loadImage();
     string f;   //to make user choose any filter as he likes
-    cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl << "3- Merge Filter"<< endl <<"4- Flip Image" << endl
-            <<"7- Detect Image Edges" << endl <<"a- Mirror 1/2 Image" << endl << "0.Exit" << endl;
+    cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl <<"2- Invert Filter"<< endl << "3- Merge Filter"<< endl <<"4- Flip Image" << endl
+            <<"6- Rotate Image"<< endl << "7- Detect Image Edges" << endl <<"a- Mirror 1/2 Image" << endl << "0.Exit" << endl;
     cin>>f;
     if(f == "1"){
         BlackAndWhite();
+    }else if(f == "2"){
+        invert_Image();
     }else if(f == "3"){
         Merge_Images();
     }else if(f == "4"){
         Flip();
+    }else if(f == "6") {
+        Rotate();
     }else if(f == "7"){
         DetectEdges();
     }else if(f == "a"){
@@ -309,6 +318,184 @@ void DownMirror(){
         for(int j=0;j<SIZE;j++){
             for(int k=0;k<3;k++){
                 colored_image[i][j][k]=colored_image[SIZE-i-1][j][k];
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
+
+}
+void Rotate(){
+    int rotate;
+    cout<<"Rotate (90) or (180) or (270): ";
+    cin>>rotate;
+    if(rotate==90)
+    {
+        Rotate90();
+    }
+    else if(rotate==180)
+    {
+        Rotate180();
+    }
+    else if(rotate == 270)
+    {
+        Rotate270();
+    }
+}
+void Rotate90()
+{
+    for (int i = 0; i < 256; i++) {
+        for (int j = i; j < 256; j++) {
+            for (int k = 0; k < RGB; k++) {
+                if (i != j) {
+                    int pix = colored_image[i][j][k];
+                    colored_image[i][j][k] = colored_image[j][i][k];
+                    colored_image[j][i][k] = pix;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0;j<128; j++) {
+            for(int k=0;k<RGB;k++) {
+                int pix = colored_image[i][j][k];
+                colored_image[i][j][k]= colored_image[i][256-j-1][k];
+                colored_image[i][256-j-1][k] = pix;
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
+}
+void Rotate180()
+{
+
+    for(int i=0;i<256;i++){
+        for(int j=i;j<256;j++){
+
+            swap(colored_image[i][j][0],colored_image[j][i][0]);
+            swap(colored_image[i][j][1],colored_image[j][i][1]);
+            swap(colored_image[i][j][2],colored_image[j][i][2]);
+
+
+        }
+    }
+    for(int i=0;i<256;i++) {
+        for (int j = 0; j < 256 - i; j++) {
+
+            swap(colored_image[i][j][0], colored_image[256 - 1 - j][256 - 1 - i][0]);
+            swap(colored_image[i][j][1], colored_image[256 - 1 - j][256 - 1 - i][1]);
+            swap(colored_image[i][j][2], colored_image[256 - 1 - j][256 - 1 - i][2]);
+
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
+
+}
+void Rotate270() {
+    for (int i = 0; i < 256; i++) {
+        for (int j = i; j < 256; j++) {
+            for (int k = 0; k < RGB; k++) {
+                if (i != j) {
+                    int pix = colored_image[i][j][k];
+                    colored_image[i][j][k] = colored_image[j][i][k];
+                    colored_image[j][i][k] = pix;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0;j<128; j++) {
+            for(int k=0;k<RGB;k++) {
+                int pix = colored_image[i][j][k];
+                colored_image[i][j][k]= colored_image[i][256-j-1][k];
+                colored_image[i][256-j-1][k] = pix;
+            }
+        }
+    }
+    for (int i = 0; i < 256; i++) {
+        for (int j = i; j < 256; j++) {
+            for (int k = 0; k < RGB; k++) {
+                if (i != j) {
+                    int pix = colored_image[i][j][k];
+                    colored_image[i][j][k] = colored_image[j][i][k];
+                    colored_image[j][i][k] = pix;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0;j<128; j++) {
+            for(int k=0;k<RGB;k++) {
+                int pix = colored_image[i][j][k];
+                colored_image[i][j][k]= colored_image[i][256-j-1][k];
+                colored_image[i][256-j-1][k] = pix;
+            }
+        }
+    }
+    for (int i = 0; i < 256; i++) {
+        for (int j = i; j < 256; j++) {
+            for (int k = 0; k < RGB; k++) {
+                if (i != j) {
+                    int pix = colored_image[i][j][k];
+                    colored_image[i][j][k] = colored_image[j][i][k];
+                    colored_image[j][i][k] = pix;
+                }
+            }
+        }
+    }
+
+    for (int i = 0; i < 256; i++) {
+        for (int j = 0;j<128; j++) {
+            for(int k=0;k<RGB;k++) {
+                int pix = colored_image[i][j][k];
+                colored_image[i][j][k]= colored_image[i][256-j-1][k];
+                colored_image[i][256-j-1][k] = pix;
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
+
+}
+void invert_Image(){
+    for(int i = 0 ; i < SIZE ; i ++)
+    {
+        for(int j = 0;j<SIZE;j++) {
+            for (int k = 0; k < RGB; k++) {
+                colored_image[i][j][k] = 255 - colored_image[i][j][k];
             }
         }
     }
