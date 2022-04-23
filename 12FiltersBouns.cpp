@@ -13,17 +13,22 @@ void loadImage ();
 void BlackAndWhite ();
 void readnewimage();
 void Merge_Images();
+void Flip();
+void HorizontalFlip();
+void VerticalFlip();
 void again();
 int main(){
     cout << "Ahlan ya user ya habibi :)" << endl;
     loadImage();
     string f;   //to make user choose any filter as he likes
-    cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl << "3- Merge Filter"<< endl;
+    cout<<"Please select a filter to apply or 0 to exit: "<< endl <<"1- Black & White Filter" << endl << "3- Merge Filter"<< endl <<"4- Flip Image" << endl;
     cin>>f;
     if(f == "1"){
         BlackAndWhite();
     }else if(f == "3"){
         Merge_Images();
+    }else if(f == "4"){
+        Flip();
     }
     again();
     return 0;
@@ -105,4 +110,62 @@ void Merge_Images(){
     strcat (imageFileName, ".bmp");
     writeRGBBMP(imageFileName, colored_image);
 
+}
+void Flip(){
+    cout<<"1.Horizontal"<<endl<<"2.Vertical"<<endl;
+    int num;  //choosing between Horizontal Flip or Vertical flip
+    cin>>num;
+    for(int i=0;i<3;i++){
+        if(num==1){
+            HorizontalFlip();
+            break;
+        }
+        else if(num==2){
+            VerticalFlip();
+            break;
+        }
+        else{
+            cout<<"please try again and enter 1 for Horizontal Flip or 2 for Vertical Flip"<<endl;
+            main();
+            break;
+        }
+    }
+
+}
+void HorizontalFlip(){
+    for(int i=0;i<SIZE;i++){
+        for(int j=0;j<SIZE/2;j++){
+            for(int k=0;k<3;k++){
+                swap(colored_image[i][j][k],colored_image[i][SIZE-j-1][k]);
+            }
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
+}
+void VerticalFlip(){
+    for(int i=0;i<SIZE/2;i++){
+        for(int j=0;j<SIZE;j++){
+            for(int k=0;k<3;k++){
+                swap(colored_image[i][j][k],colored_image[SIZE-i-1][j][k]);
+            }
+
+        }
+    }
+    char imageFileName[100];
+
+    // Get gray scale image target file name
+    cout << "Enter the target image file name: ";
+    cin >> imageFileName;
+
+    // Add to it .bmp extension and load image
+    strcat (imageFileName, ".bmp");
+    writeRGBBMP(imageFileName, colored_image);
 }
